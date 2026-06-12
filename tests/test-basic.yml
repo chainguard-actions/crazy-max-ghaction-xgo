@@ -1,0 +1,30 @@
+name: Test basic xgo cross-compilation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          xgo_version: latest
+          go_version: latest
+          targets: linux/amd64
+          dest: build
+          v: 'true'
+          x: 'false'
+          race: 'false'
+          trimpath: 'false'
+          buildmode: default
+          working_dir: ${{ github.workspace }}/actions/hardened/crazy-max--ghaction-xgo/v4.0.0/tests/fixtures/hello
+      - name: Assert binary was produced
+        run: |
+          echo "Listing build directory:"
+          ls -la "$GITHUB_WORKSPACE/actions/hardened/crazy-max--ghaction-xgo/v4.0.0/tests/fixtures/hello/build/" || true
+          if [ -z "$(ls -A "$GITHUB_WORKSPACE/actions/hardened/crazy-max--ghaction-xgo/v4.0.0/tests/fixtures/hello/build/" 2>/dev/null)" ]; then
+            echo "FAIL: no binaries found in build directory"
+            exit 1
+          fi
+          echo "PASS: binaries found"

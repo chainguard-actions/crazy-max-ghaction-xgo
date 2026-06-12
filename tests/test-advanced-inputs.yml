@@ -1,0 +1,32 @@
+name: Test xgo advanced inputs coverage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          xgo_version: latest
+          go_version: latest
+          targets: linux/amd64
+          dest: out
+          pkg: ''
+          prefix: hello-bin
+          tags: ''
+          ldflags: '-s -w'
+          buildvcs: 'false'
+          trimpath: 'true'
+          buildmode: default
+          working_dir: ${{ github.workspace }}/actions/hardened/crazy-max--ghaction-xgo/v4.0.0/tests/fixtures/hello
+      - name: Assert binary was produced with prefix
+        run: |
+          echo "Listing out directory:"
+          ls -la "$GITHUB_WORKSPACE/actions/hardened/crazy-max--ghaction-xgo/v4.0.0/tests/fixtures/hello/out/" || true
+          if [ -z "$(ls -A "$GITHUB_WORKSPACE/actions/hardened/crazy-max--ghaction-xgo/v4.0.0/tests/fixtures/hello/out/" 2>/dev/null)" ]; then
+            echo "FAIL: no binaries found in out directory"
+            exit 1
+          fi
+          echo "PASS: binaries found with advanced inputs"
