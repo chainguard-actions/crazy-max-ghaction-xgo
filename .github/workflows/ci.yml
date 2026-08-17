@@ -1,0 +1,51 @@
+name: ci
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  push:
+    branches:
+      - 'master'
+      - 'releases/v*'
+    tags:
+      - 'v*'
+  pull_request:
+    paths-ignore:
+      - '.github/xgo-releases.json'
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go_version:
+          - "1.20"
+          - "1.21"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      -
+        name: Xgo
+        uses: ./
+        with:
+          go_version: ${{ matrix.go_version }}
+          targets: windows/amd64,linux/amd64,linux/arm64,linux/arm/v7,darwin/amd64,darwin/arm64
+          v: true
+          x: false
+          ldflags: -s -w
+          trimpath: true
+          working_dir: ./test
+      -
+        name: Check
+        run: |
+          sudo apt-get -qq install tree
+          tree -f -h ./test/build

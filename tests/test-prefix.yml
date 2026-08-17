@@ -1,0 +1,25 @@
+name: Test prefix input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          xgo_version: latest
+          go_version: '1.21'
+          targets: 'linux/amd64'
+          dest: build-prefix
+          prefix: 'myapp'
+      - name: Assert build output exists
+        run: |
+          echo "Checking build output directory..."
+          ls -la build-prefix/ || true
+          if [ ! -d "build-prefix" ]; then
+            echo "FAIL: build output directory 'build-prefix' not found"
+            exit 1
+          fi
+          echo "PASS: build directory exists"

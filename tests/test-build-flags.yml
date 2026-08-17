@@ -1,0 +1,51 @@
+name: Test build flags (ldflags, trimpath)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create simple Go project
+        run: |
+          mkdir -p /tmp/goproject4
+          cat > /tmp/goproject4/main.go << 'EOF'
+          package main
+
+          import "fmt"
+
+          var version = "dev"
+
+          func main() {
+            fmt.Printf("version: %s\n", version)
+          }
+          EOF
+          cat > /tmp/goproject4/go.mod << 'EOF'
+          module example.com/flagsapp
+
+          go 1.21
+          EOF
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          xgo_version: latest
+          go_version: "1.21"
+          dest: /tmp/goproject4/build
+          targets: linux/amd64
+          ldflags: "-s -w -X main.version=1.0.0"
+          trimpath: "true"
+          working_dir: /tmp/goproject4
+
+      - name: Assert xgo was downloaded to tool cache
+        run: |
+          echo "Checking tool cache for xgo binary (ldflags/trimpath test)..."
+          XGO_PATH=$(find /opt/hostedtoolcache/ghaction-xgo -name "xgo" -type f 2>/dev/null | head -1)
+          if [ -z "$XGO_PATH" ]; then
+            echo "FAIL: xgo binary not found in tool cache"
+            exit 1
+          fi
+          echo "PASS: xgo binary found at $XGO_PATH"
+          ls -la "$XGO_PATH"

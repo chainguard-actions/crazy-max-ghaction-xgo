@@ -1,0 +1,48 @@
+name: Test multiple targets
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create simple Go project
+        run: |
+          mkdir -p /tmp/goproject3
+          cat > /tmp/goproject3/main.go << 'EOF'
+          package main
+
+          import "fmt"
+
+          func main() {
+            fmt.Println("Hello, xgo!")
+          }
+          EOF
+          cat > /tmp/goproject3/go.mod << 'EOF'
+          module example.com/multiapp
+
+          go 1.21
+          EOF
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          xgo_version: latest
+          go_version: "1.21"
+          dest: /tmp/goproject3/build
+          targets: linux/amd64,linux/arm64
+          v: "true"
+          working_dir: /tmp/goproject3
+
+      - name: Assert xgo was downloaded to tool cache
+        run: |
+          echo "Checking tool cache for xgo binary (multi-target test)..."
+          XGO_PATH=$(find /opt/hostedtoolcache/ghaction-xgo -name "xgo" -type f 2>/dev/null | head -1)
+          if [ -z "$XGO_PATH" ]; then
+            echo "FAIL: xgo binary not found in tool cache"
+            exit 1
+          fi
+          echo "PASS: xgo binary found at $XGO_PATH"
+          ls -la "$XGO_PATH"

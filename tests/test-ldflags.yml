@@ -1,4 +1,4 @@
-name: Test basic cross-compilation
+name: Test ldflags and trimpath
 on:
   workflow_dispatch:
 jobs:
@@ -14,10 +14,10 @@ jobs:
           chmod +x "$HOME/fake-bin/docker"
           echo "$HOME/fake-bin" >> "$GITHUB_PATH"
 
-      - name: Create build output directory
-        run: mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/hello/build"
+      - name: Create build-ldflags directory
+        run: mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/hello/build-ldflags"
 
-      - name: Run xgo cross-compilation (linux/amd64 only)
+      - name: Run xgo with ldflags and trimpath
         id: action
         uses: .
         with:
@@ -25,17 +25,18 @@ jobs:
           go_version: '1.21'
           targets: 'linux/amd64'
           working_dir: '${{ github.workspace }}/tests/fixtures/hello'
-          dest: 'build'
-          v: 'true'
+          dest: 'build-ldflags'
+          ldflags: '-s -w'
+          trimpath: 'true'
 
-      - name: Assert binary was produced
+      - name: Assert binary was produced with ldflags
         run: |
-          echo "Listing build directory:"
-          ls -la "$GITHUB_WORKSPACE/tests/fixtures/hello/build/" || true
-          count=$(find "$GITHUB_WORKSPACE/tests/fixtures/hello/build" -type f | wc -l)
+          echo "Listing build-ldflags directory:"
+          ls -la "$GITHUB_WORKSPACE/tests/fixtures/hello/build-ldflags/" || true
+          count=$(find "$GITHUB_WORKSPACE/tests/fixtures/hello/build-ldflags" -type f | wc -l)
           echo "Binary count: $count"
           if [ "$count" -lt 1 ]; then
-            echo "FAIL: No binaries found in build directory"
+            echo "FAIL: No binaries found in build-ldflags directory"
             exit 1
           fi
-          echo "PASS: Found $count binary/binaries"
+          echo "PASS: Found $count binary/binaries with ldflags and trimpath"
