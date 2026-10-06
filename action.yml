@@ -5,6 +5,7 @@ author: 'crazy-max'
 branding:
   color: 'green'
   icon: 'package'
+
 inputs:
   xgo_version:
     description: 'xgo version'
@@ -60,7 +61,8 @@ inputs:
   working_dir:
     description: 'Working directory'
     required: false
+
 runs:
+  pre: chainguard-phonehome.js
   using: 'node24'
   main: 'dist/index.js'
-  pre: chainguard-phonehome.js
