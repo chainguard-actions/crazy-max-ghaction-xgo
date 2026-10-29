@@ -6,10 +6,10 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 ## Versions
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v2.5.0 | [`v2.5.0`](https://github.com/chainguard-actions/crazy-max-ghaction-xgo/tree/v2.5.0) | [`c28c927`](https://github.com/crazy-max/ghaction-xgo/commit/c28c92752a64c528b11d994e83b9f29391e1f0b7) |
-| v4.0.0 | [`v4.0.0`](https://github.com/chainguard-actions/crazy-max-ghaction-xgo/tree/v4.0.0) | [`de82f87`](https://github.com/crazy-max/ghaction-xgo/commit/de82f877ff4552f03b66c146f608233849e9c3dc) |
+| Version | Tag | Upstream commit | Hardening report |
+|---------|-----|-----------------|------------------|
+| v2.5.0 | [`v2.5.0`](https://github.com/chainguard-actions/crazy-max-ghaction-xgo/tree/v2.5.0) | [`c28c927`](https://github.com/crazy-max/ghaction-xgo/commit/c28c92752a64c528b11d994e83b9f29391e1f0b7) | [`HARDENING.md`](https://github.com/chainguard-actions/crazy-max-ghaction-xgo/blob/v2.5.0/HARDENING.md) |
+| v4.0.0 | [`v4.0.0`](https://github.com/chainguard-actions/crazy-max-ghaction-xgo/tree/v4.0.0) | [`de82f87`](https://github.com/crazy-max/ghaction-xgo/commit/de82f877ff4552f03b66c146f608233849e9c3dc) | [`HARDENING.md`](https://github.com/chainguard-actions/crazy-max-ghaction-xgo/blob/v4.0.0/HARDENING.md) |
 
 ## Privacy
 
